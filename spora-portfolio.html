@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SPORA – Climate-Smart Autonomous Restoration</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..500;9..600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #3e2619;
+    --bg-mid:    #4d2f1e;
+    --bg-light:  #5c3a25;
+    --cream:     #f7efe5;
+    --tan:       #d8c3a5;
+    --tan-dim:   rgba(216,195,165,0.18);
+    --tan-border:rgba(216,195,165,0.30);
+    --green:     #4a8c5c;
+    --green-lt:  #6ab87c;
+    --green-glow:rgba(74,140,92,0.25);
+    --gold:      #c9a84c;
+    --gold-lt:   #e8c96a;
+    --gold-dim:  rgba(201,168,76,0.15);
+    --glass:     rgba(247,239,229,0.06);
+    --glass2:    rgba(247,239,229,0.10);
+    --shadow:    0 8px 40px rgba(0,0,0,0.45);
+    --radius:    14px;
+    --font-head: 'Cormorant Garamond', serif;
+    --font-body: 'DM Sans', sans-serif;
+    --font-mono: 'DM Mono', monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background-color: var(--bg);
+    color: var(--cream);
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.65;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE TEXTURE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: .45;
+  }
+
+  /* ── GEOMETRIC DECO LINES ── */
+  .deco-line {
+    position: absolute;
+    background: linear-gradient(90deg, transparent, var(--tan-border), transparent);
+    height: 1px;
+    width: 100%;
+    left: 0;
+  }
+
+  /* ── WRAPPER ── */
+  .page { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; padding: 0 18px 60px; }
+
+  /* ══════════════════════════════
+     HERO
+  ══════════════════════════════ */
+  .hero {
+    padding: 60px 0 48px;
+    text-align: center;
+    position: relative;
+  }
+
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--green-lt);
+    background: var(--green-glow);
+    border: 1px solid rgba(106,184,124,0.30);
+    padding: 5px 14px;
+    border-radius: 100px;
+    margin-bottom: 26px;
+    animation: fadeUp .8s ease both;
+  }
+
+  .hero-eyebrow .dot {
+    width: 6px; height: 6px;
+    background: var(--green-lt);
+    border-radius: 50%;
+    animation: pulse 2s ease infinite;
+  }
+
+  @keyframes pulse {
+    0%,100% { opacity:1; transform:scale(1); }
+    50%      { opacity:.5; transform:scale(1.4); }
+  }
+
+  .hero-title {
+    font-family: var(--font-head);
+    font-size: clamp(2rem, 6vw, 3.4rem);
+    font-weight: 600;
+    line-height: 1.18;
+    color: var(--cream);
+    margin-bottom: 14px;
+    animation: fadeUp .9s .1s ease both;
+  }
+
+  .hero-title .spora {
+    color: var(--green-lt);
+    font-style: italic;
+  }
+
+  .hero-subtitle {
+    font-size: clamp(.9rem, 2.5vw, 1.1rem);
+    color: var(--tan);
+    font-weight: 300;
+    max-width: 600px;
+    margin: 0 auto 30px;
+    animation: fadeUp .9s .2s ease both;
+  }
+
+  /* IP Badge */
+  .ip-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--gold-dim);
+    border: 1px solid rgba(201,168,76,0.40);
+    border-radius: 10px;
+    padding: 10px 20px;
+    animation: fadeUp .9s .3s ease both;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background .25s, border-color .25s, transform .2s;
+  }
+
+  .ip-badge:hover {
+    background: rgba(201,168,76,0.25);
+    border-color: var(--gold);
+    transform: translateY(-2px);
+  }
+
+  .ip-icon { font-size: 1.4rem; }
+
+  .ip-text { text-align: left; }
+
+  .ip-label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1px;
+  }
+
+  .ip-number {
+    display: block;
+    font-family: var(--font-head);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--gold-lt);
+  }
+
+  .ip-date {
+    display: block;
+    font-size: 11px;
+    color: var(--tan);
+    margin-top: 1px;
+  }
+
+  /* ══════════════════════════════
+     SECTION COMMON
+  ══════════════════════════════ */
+  section { margin-bottom: 52px; }
+
+  .section-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--green-lt);
+    margin-bottom: 6px;
+  }
+
+  .section-title {
+    font-family: var(--font-head);
+    font-size: clamp(1.5rem, 4vw, 2.1rem);
+    font-weight: 600;
+    color: var(--cream);
+    margin-bottom: 24px;
+    line-height: 1.2;
+  }
+
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--tan-border) 30%, var(--tan-border) 70%, transparent);
+    margin: 48px 0;
+  }
+
+  /* ══════════════════════════════
+     METRIC CARDS
+  ══════════════════════════════ */
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+
+  @media (max-width: 480px) {
+    .metrics-grid { grid-template-columns: 1fr; }
+  }
+
+  .metric-card {
+    background: var(--glass);
+    border: 1px solid var(--tan-border);
+    border-radius: var(--radius);
+    padding: 22px 18px 18px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    position: relative;
+    overflow: hidden;
+    transition: transform .25s, border-color .25s, box-shadow .25s;
+  }
+
+  .metric-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(216,195,165,0.55);
+    box-shadow: var(--shadow);
+  }
+
+  .metric-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+
+  .metric-card.green::before { background: linear-gradient(90deg, var(--green), var(--green-lt)); }
+  .metric-card.gold::before  { background: linear-gradient(90deg, var(--gold), var(--gold-lt)); }
+
+  .metric-value {
+    font-family: var(--font-head);
+    font-size: clamp(2.2rem, 7vw, 3rem);
+    font-weight: 600;
+    line-height: 1;
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  .metric-card.green .metric-value { color: var(--green-lt); }
+  .metric-card.gold  .metric-value { color: var(--gold-lt); }
+
+  .metric-desc {
+    font-size: .83rem;
+    color: var(--tan);
+    line-height: 1.45;
+  }
+
+  .metric-sub {
+    font-family: var(--font-mono);
+    font-size: .7rem;
+    color: rgba(216,195,165,.55);
+    display: block;
+    margin-top: 8px;
+    letter-spacing: .05em;
+  }
+
+  /* Counter animation */
+  .metric-value[data-target] { opacity: 0; }
+  .metric-value.counted { opacity: 1; }
+
+  /* ══════════════════════════════
+     TECH FRAMEWORK
+  ══════════════════════════════ */
+  .tech-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .tech-card {
+    background: var(--glass);
+    border: 1px solid var(--tan-border);
+    border-radius: var(--radius);
+    padding: 20px 20px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition: border-color .25s, background .25s;
+  }
+
+  .tech-card:hover {
+    border-color: rgba(216,195,165,.5);
+    background: var(--glass2);
+  }
+
+  .tech-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+  }
+
+  .tech-icon.green { background: var(--green-glow); border: 1px solid rgba(74,140,92,.35); }
+  .tech-icon.gold  { background: var(--gold-dim);   border: 1px solid rgba(201,168,76,.30); }
+  .tech-icon.tan   { background: var(--tan-dim);    border: 1px solid var(--tan-border); }
+
+  .tech-content {}
+
+  .tech-name {
+    font-family: var(--font-head);
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--cream);
+    margin-bottom: 4px;
+  }
+
+  .tech-detail {
+    font-size: .83rem;
+    color: var(--tan);
+    line-height: 1.5;
+  }
+
+  /* ── 5-level hierarchy ── */
+  .hierarchy {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .h-level {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: .75rem;
+    font-family: var(--font-mono);
+  }
+
+  .h-num {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--green-glow);
+    border: 1px solid var(--green);
+    color: var(--green-lt);
+    display: flex; align-items: center; justify-content: center;
+    font-size: .65rem;
+    flex-shrink: 0;
+  }
+
+  .h-text { color: var(--tan); letter-spacing: .03em; }
+
+  /* ══════════════════════════════
+     STRATEGIC ALIGNMENT
+  ══════════════════════════════ */
+  .sdg-wrap {
+    background: var(--glass);
+    border: 1px solid var(--tan-border);
+    border-radius: var(--radius);
+    padding: 22px;
+    backdrop-filter: blur(12px);
+  }
+
+  .sdg-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 14px;
+  }
+
+  .sdg-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px 5px 8px;
+    border-radius: 100px;
+    font-size: .78rem;
+    font-family: var(--font-mono);
+    letter-spacing: .04em;
+    border: 1px solid;
+  }
+
+  .sdg-chip.green {
+    background: var(--green-glow);
+    border-color: rgba(74,140,92,.35);
+    color: var(--green-lt);
+  }
+
+  .sdg-chip.gold {
+    background: var(--gold-dim);
+    border-color: rgba(201,168,76,.30);
+    color: var(--gold-lt);
+  }
+
+  .sdg-chip .icon { font-size: .9rem; }
+
+  .policy-list {
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .policy-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: .85rem;
+    color: var(--tan);
+  }
+
+  .policy-item::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    flex-shrink: 0;
+  }
+
+  /* ══════════════════════════════
+     CTA
+  ══════════════════════════════ */
+  .cta-section {
+    text-align: center;
+    padding: 40px 20px;
+    background: var(--glass);
+    border: 1px solid var(--tan-border);
+    border-radius: 20px;
+    backdrop-filter: blur(16px);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(74,140,92,.12) 0%, transparent 65%);
+    pointer-events: none;
+  }
+
+  .cta-tag {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--green-lt);
+    margin-bottom: 10px;
+  }
+
+  .cta-heading {
+    font-family: var(--font-head);
+    font-size: clamp(1.4rem, 5vw, 2rem);
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+
+  .cta-sub {
+    font-size: .88rem;
+    color: var(--tan);
+    margin-bottom: 28px;
+    max-width: 420px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .btn-sim {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: linear-gradient(135deg, var(--green) 0%, #3d7a4e 100%);
+    color: #fff;
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 16px 36px;
+    border-radius: 100px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 0 0 0 rgba(74,140,92,.5);
+    transition: transform .2s, box-shadow .3s;
+    animation: glow 3s ease infinite;
+    position: relative;
+    z-index: 1;
+  }
+
+  .btn-sim:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 12px 40px rgba(74,140,92,.45);
+    animation: none;
+  }
+
+  @keyframes glow {
+    0%,100% { box-shadow: 0 0 0 0 rgba(74,140,92,.4); }
+    50%      { box-shadow: 0 0 0 12px rgba(74,140,92,.0); }
+  }
+
+  .btn-icon { font-size: 1.1rem; }
+
+  /* Patent Link */
+  .patent-link-wrap {
+    margin-top: 20px;
+  }
+
+  .patent-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--gold-lt);
+    font-size: .83rem;
+    text-decoration: none;
+    border-bottom: 1px dashed rgba(201,168,76,.4);
+    padding-bottom: 1px;
+    transition: color .2s, border-color .2s;
+  }
+
+  .patent-link:hover {
+    color: var(--gold);
+    border-color: var(--gold);
+  }
+
+  /* ══════════════════════════════
+     FOOTER
+  ══════════════════════════════ */
+  footer {
+    margin-top: 60px;
+    padding-top: 28px;
+    border-top: 1px solid var(--tan-border);
+    text-align: center;
+  }
+
+  .footer-affil {
+    font-family: var(--font-head);
+    font-size: 1.05rem;
+    font-style: italic;
+    color: var(--tan);
+    margin-bottom: 12px;
+  }
+
+  .footer-authors {
+    font-size: .78rem;
+    color: rgba(216,195,165,.6);
+    line-height: 1.8;
+    max-width: 540px;
+    margin: 0 auto 16px;
+  }
+
+  .footer-authors strong {
+    color: rgba(216,195,165,.85);
+    font-weight: 500;
+  }
+
+  .footer-copy {
+    font-family: var(--font-mono);
+    font-size: .68rem;
+    color: rgba(216,195,165,.3);
+    letter-spacing: .1em;
+    margin-top: 20px;
+  }
+
+  /* ══════════════════════════════
+     ANIMATIONS
+  ══════════════════════════════ */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity .6s ease, transform .6s ease;
+  }
+
+  .fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ══════════════════════════════
+     SCROLLBAR
+  ══════════════════════════════ */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--tan-border); border-radius: 3px; }
+
+  /* ══════════════════════════════
+     TOP PROGRESS BAR
+  ══════════════════════════════ */
+  #progress {
+    position: fixed;
+    top: 0; left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--green), var(--gold));
+    z-index: 999;
+    width: 0%;
+    transition: width .1s linear;
+  }
+
+  /* ══════════════════════════════
+     ORBITAL DECO (hero bg)
+  ══════════════════════════════ */
+  .orbital {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid;
+    pointer-events: none;
+    animation: spin linear infinite;
+  }
+
+  .orbital-1 {
+    width: 300px; height: 300px;
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    border-color: rgba(74,140,92,.08);
+    animation-duration: 40s;
+  }
+
+  .orbital-2 {
+    width: 480px; height: 480px;
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    border-color: rgba(216,195,165,.05);
+    animation-duration: 65s;
+    animation-direction: reverse;
+  }
+
+  @keyframes spin {
+    from { transform: translate(-50%,-50%) rotate(0deg); }
+    to   { transform: translate(-50%,-50%) rotate(360deg); }
+  }
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<div class="page">
+
+  <!-- ══ HERO ══ -->
+  <section class="hero">
+    <div class="orbital orbital-1"></div>
+    <div class="orbital orbital-2"></div>
+
+    <div class="hero-eyebrow">
+      <span class="dot"></span>
+      Autonomous Restoration System · UAE
+    </div>
+
+    <h1 class="hero-title">
+      <span class="spora">SPORA:</span> Climate-Smart Autonomous Restoration for Sustainable Food Security in Arid Lands
+    </h1>
+
+    <p class="hero-subtitle">
+      An AI-Powered Framework for Self-Sustaining Ecosystem Restoration in the UAE
+    </p>
+
+    <a class="ip-badge"
+       href="https://drive.google.com/file/d/1G3L627yd6BCXCYzHEptUaHNytzL-mWhz/view?usp=sharing"
+       target="_blank" rel="noopener">
+      <span class="ip-icon">🏛️</span>
+      <span class="ip-text">
+        <span class="ip-label">UK Intellectual Property Office</span>
+        <span class="ip-number">Registered Design No. 6482196</span>
+        <span class="ip-date">Granted 04 November 2025 · Click to View Certificate</span>
+      </span>
+    </a>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ══ IMPACT DASHBOARD ══ -->
+  <section class="fade-in">
+    <p class="section-label">/ Impact Dashboard</p>
+    <h2 class="section-title">Measured Outcomes</h2>
+
+    <div class="metrics-grid">
+      <div class="metric-card green">
+        <span class="metric-value" data-target="+31%" data-prefix="+" data-suffix="%" data-num="31">+31%</span>
+        <p class="metric-desc">Growth Success Rate via Atmospheric Water Extraction & precision hydrogels</p>
+        <span class="metric-sub">vs. control group · field trials</span>
+      </div>
+
+      <div class="metric-card gold">
+        <span class="metric-value" data-target="-35%" data-prefix="-" data-suffix="%" data-num="35">-35%</span>
+        <p class="metric-desc">Reduction in Soil Erosion through targeted seed-bed preparation</p>
+        <span class="metric-sub">measured post-deployment</span>
+      </div>
+
+      <div class="metric-card gold">
+        <span class="metric-value" data-target="-19%" data-prefix="-" data-suffix="%" data-num="19">-19%</span>
+        <p class="metric-desc">Reduction in Path Curvature via A* and RRT navigation optimization</p>
+        <span class="metric-sub">autonomous mobility efficiency</span>
+      </div>
+
+      <div class="metric-card green">
+        <span class="metric-value" data-target="-22%" data-prefix="-" data-suffix="%" data-num="22">-22%</span>
+        <p class="metric-desc">Reduction in Seed Loss compared to conventional manual seeding methods</p>
+        <span class="metric-sub">precision deployment system</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ══ TECHNICAL FRAMEWORK ══ -->
+  <section class="fade-in">
+    <p class="section-label">/ Technical Framework</p>
+    <h2 class="section-title">SPORA System Architecture</h2>
+
+    <div class="tech-grid">
+
+      <div class="tech-card">
+        <div class="tech-icon green">🧠</div>
+        <div class="tech-content">
+          <p class="tech-name">Cyber-Physical System</p>
+          <p class="tech-detail">5-Level Hierarchical <em>Restoration Intelligence</em> — a layered decision architecture enabling real-time adaptive responses across the full operational environment.</p>
+          <div class="hierarchy">
+            <div class="h-level"><span class="h-num">5</span><span class="h-text">Mission Planning & Strategic Control</span></div>
+            <div class="h-level"><span class="h-num">4</span><span class="h-text">Autonomous Task Scheduling</span></div>
+            <div class="h-level"><span class="h-num">3</span><span class="h-text">Sensor Fusion & Environmental Perception</span></div>
+            <div class="h-level"><span class="h-num">2</span><span class="h-text">Actuation & Mobility Control</span></div>
+            <div class="h-level"><span class="h-num">1</span><span class="h-text">Physical Hardware & Field Interaction</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tech-card">
+        <div class="tech-icon tan">💧</div>
+        <div class="tech-content">
+          <p class="tech-name">Water Management</p>
+          <p class="tech-detail">Integrated <strong>Atmospheric Water Extraction (AWE)</strong> paired with moisture-retaining hydrogel capsules embedded at seed deployment sites — enabling off-grid irrigation in hyper-arid environments with zero external water dependency.</p>
+        </div>
+      </div>
+
+      <div class="tech-card">
+        <div class="tech-icon green">🛰️</div>
+        <div class="tech-content">
+          <p class="tech-name">Navigation & Mobility</p>
+          <p class="tech-detail"><strong>Solar-powered autonomous mobility</strong> guided by multi-modal sensor fusion: LiDAR, GPS-RTK, thermal imaging, and soil moisture arrays. Combines A* graph search with RRT probabilistic planning for terrain-adaptive pathfinding across dynamic desert landscapes.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ══ STRATEGIC ALIGNMENT ══ -->
+  <section class="fade-in">
+    <p class="section-label">/ Strategic Alignment</p>
+    <h2 class="section-title">Policy & Global Framework</h2>
+
+    <div class="sdg-wrap">
+      <p class="tech-detail" style="margin-bottom:6px;">SPORA is engineered in direct support of national and international sustainability mandates:</p>
+
+      <div class="policy-list">
+        <div class="policy-item">UAE Net Zero 2050 Strategy — carbon-neutral restoration at scale</div>
+        <div class="policy-item">UAE National Food Security Strategy 2051 — autonomous agri-restoration in arid zones</div>
+        <div class="policy-item">United Nations Sustainable Development Goals</div>
+      </div>
+
+      <div class="sdg-row">
+        <span class="sdg-chip green"><span class="icon">💧</span>SDG 6 — Clean Water</span>
+        <span class="sdg-chip green"><span class="icon">⚙️</span>SDG 9 — Industry &amp; Innovation</span>
+        <span class="sdg-chip gold"><span class="icon">🌡️</span>SDG 13 — Climate Action</span>
+        <span class="sdg-chip gold"><span class="icon">🌿</span>SDG 15 — Life on Land</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ══ CTA ══ -->
+  <section class="cta-section fade-in">
+    <p class="cta-tag">/ Operational Demonstration</p>
+    <h2 class="cta-heading">Experience SPORA in Action</h2>
+    <p class="cta-sub">Explore the full system simulation — autonomous navigation, seed deployment, and real-time environmental adaptation.</p>
+
+    <a class="btn-sim"
+       href="https://drive.google.com/file/d/1-eB1i4NajLT3XnbVmzQEgd2jN1IxCDhP/view?usp=sharing"
+       target="_blank" rel="noopener">
+      <span class="btn-icon">▶</span>
+      LAUNCH SYSTEM SIMULATION
+    </a>
+
+    <div class="patent-link-wrap">
+      <a class="patent-link"
+         href="https://drive.google.com/file/d/1G3L627yd6BCXCYzHEptUaHNytzL-mWhz/view?usp=sharing"
+         target="_blank" rel="noopener">
+        🏛️ &nbsp;View UK Registered Design Certificate (UKIPO No. 6482196)
+      </a>
+    </div>
+  </section>
+
+  <!-- ══ FOOTER ══ -->
+  <footer class="fade-in">
+    <p class="footer-affil">SOEIT — Manipal Academy of Higher Education, Dubai Campus</p>
+    <p class="footer-authors">
+      <strong>Teresa Rose ThomasMuhammed Rizwan</strong> · <strong>Muhammed Rizwan</strong> · <strong>Shaurav Divyesh Vora</strong><br>
+      <strong>Amardev Anishkumar</strong> · <strong>Joel Sudeep</strong> · <strong>Dr. Raja Varma Pamba</strong>
+    </p>
+    <p class="footer-copy">SPORA · Climate-Smart Autonomous Restoration · © 2026 All Rights Reserved</p>
+  </footer>
+
+</div><!-- /page -->
+
+<script>
+  /* ── SCROLL PROGRESS BAR ── */
+  window.addEventListener('scroll', () => {
+    const doc = document.documentElement;
+    const pct = (window.scrollY / (doc.scrollHeight - doc.clientHeight)) * 100;
+    document.getElementById('progress').style.width = pct + '%';
+  });
+
+  /* ── INTERSECTION OBSERVER for fade-in ── */
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+  /* ── COUNTER ANIMATION for metric values ── */
+  const counterObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        animateCounter(e.target);
+        counterObs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.5 });
+
+  document.querySelectorAll('.metric-value[data-num]').forEach(el => counterObs.observe(el));
+
+  function animateCounter(el) {
+    const target = parseInt(el.dataset.num);
+    const prefix = el.dataset.prefix || '';
+    const suffix = el.dataset.suffix || '';
+    const duration = 1400;
+    const start = performance.now();
+
+    el.classList.add('counted');
+
+    function tick(now) {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const ease = 1 - Math.pow(1 - progress, 3); // ease-out-cubic
+      const current = Math.round(ease * target);
+      el.textContent = prefix + current + suffix;
+      if (progress < 1) requestAnimationFrame(tick);
+    }
+
+    requestAnimationFrame(tick);
+  }
+</script>
+</body>
+</html>
